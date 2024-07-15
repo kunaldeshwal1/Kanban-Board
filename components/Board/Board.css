@@ -2,7 +2,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 310px;
+  width: 280px;
   word-wrap: break-word;
   background-color: var(--board-color);
   background-clip: border-box;
