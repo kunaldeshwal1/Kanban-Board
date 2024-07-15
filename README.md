@@ -6,11 +6,8 @@
 ## Features ✨
 
 - Drag & drop tasks
-- CRUD for tasks, labels & columns
+- CRUD for tasks & columns
 - Task descriptions
-- Dark Mode
-- Add Label to see the progress status
-
 ## Development setup 🛠
 
 Steps to locally setup development after cloning the project.

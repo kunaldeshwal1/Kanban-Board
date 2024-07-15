@@ -1,32 +1,15 @@
 import React, { useState, useEffect } from "react";
-import {
-  Calendar,
-  Check,
-  CheckSquare,
-  Clock,
-  CreditCard,
-  List,
-  Plus,
-  Tag,
-  Trash,
-  Type,
-  X,
-} from "react-feather"; // Icons imported for various features
-import Editable from "../../Editable/Editable"; // Editable component for adding tasks
-import Modal from "../../Modal/Modal"; // Modal component for detailed view
-import "./CardDetails.css"; // CSS file for styling CardDetails
-import { v4 as uuidv4 } from "uuid"; // Library for generating unique IDs
-import Label from "../../Label/Label"; // Component for managing labels/tags
+import { CreditCard, Trash, X } from "react-feather";
+import Editable from "../../Editable/Editable";
+import Modal from "../../Modal/Modal";
+import "./CardDetails.css";
+import { v4 as uuidv4 } from "uuid";
 
 export default function CardDetails(props) {
-  const colors = ["#61bd4f", "#f2d600", "#ff9f1a", "#eb5a46", "#c377e0"]; // Array of colors for tags
+  const [values, setValues] = useState({ ...props.card });
+  const [input, setInput] = useState(false);
+  const [text, setText] = useState(values.title);
 
-  const [values, setValues] = useState({ ...props.card }); // State for card details
-  const [input, setInput] = useState(false); // State for input field visibility
-  const [text, setText] = useState(values.title); // State for text input
-  const [labelShow, setLabelShow] = useState(false); // State for showing label/tag selector
-
-  // Input component for editing title
   const Input = (props) => {
     return (
       <div className="">
@@ -42,7 +25,6 @@ export default function CardDetails(props) {
     );
   };
 
-  // Function to add a task
   const addTask = (value) => {
     values.task.push({
       id: uuidv4(),
@@ -52,62 +34,21 @@ export default function CardDetails(props) {
     setValues({ ...values });
   };
 
-  // Function to remove a task
   const removeTask = (id) => {
     const remainingTask = values.task.filter((item) => item.id !== id);
     setValues({ ...values, task: remainingTask });
   };
 
-  // Function to delete all tasks
-  const deleteAllTask = () => {
-    setValues({
-      ...values,
-      task: [],
-    });
-  };
-
-  // Function to update task completion status
   const updateTask = (id) => {
     const taskIndex = values.task.findIndex((item) => item.id === id);
     values.task[taskIndex].completed = !values.task[taskIndex].completed;
     setValues({ ...values });
   };
 
-  // Function to update title
   const updateTitle = (value) => {
     setValues({ ...values, title: value });
   };
 
-  // Function to calculate completion percentage of tasks
-  const calculatePercent = () => {
-    const totalTask = values.task.length;
-    const completedTask = values.task.filter((item) => item.completed === true)
-      .length;
-
-    return Math.floor((completedTask * 100) / totalTask) || 0;
-  };
-
-  // Function to remove a tag
-  const removeTag = (id) => {
-    const tempTag = values.tags.filter((item) => item.id !== id);
-    setValues({
-      ...values,
-      tags: tempTag,
-    });
-  };
-
-  // Function to add a tag
-  const addTag = (value, color) => {
-    values.tags.push({
-      id: uuidv4(),
-      tagName: value,
-      color: color,
-    });
-
-    setValues({ ...values });
-  };
-
-  // Event listener for handling key press (Enter) to update title
   const handleClickListener = (e) => {
     if (e.code === "Enter") {
       setInput(false);
@@ -115,7 +56,6 @@ export default function CardDetails(props) {
     } else return;
   };
 
-  // Effect hook to add event listener for key press
   useEffect(() => {
     document.addEventListener("keypress", handleClickListener);
     return () => {
@@ -123,7 +63,6 @@ export default function CardDetails(props) {
     };
   });
 
-  // Effect hook to update card details via props when values change
   useEffect(() => {
     if (props.updateCard) props.updateCard(props.bid, values.id, values);
   }, [values]);
@@ -154,79 +93,18 @@ export default function CardDetails(props) {
           </div>
           <div className="row">
             <div className="col-8">
-              <h6 className="text-justify">Label</h6>
-              <div
-                className="d-flex label__color flex-wrap"
-                style={{ width: "500px", paddingRight: "10px" }}
-              >
-                {/* Displaying tags */}
-                {values.tags.length !== 0 ? (
-                  values.tags.map((item) => (
-                    <span
-                      className="d-flex justify-content-between align-items-center gap-2"
-                      style={{ backgroundColor: item.color }}
-                    >
-                      {/* Truncating tag name if too long */}
-                      {item.tagName.length > 10
-                        ? item.tagName.slice(0, 6) + "..."
-                        : item.tagName}
-                      <X
-                        onClick={() => removeTag(item.id)}
-                        style={{ width: "15px", height: "15px" }}
-                      />
-                    </span>
-                  ))
-                ) : (
-                  <span
-                    style={{ color: "#ccc" }}
-                    className="d-flex justify-content-between align-items-center gap-2"
-                  >
-                    <i> No Labels</i>
-                  </span>
-                )}
-              </div>
               <div className="check__list mt-2">
                 <div className="d-flex align-items-end  justify-content-between">
                   <div className="d-flex align-items-center gap-2">
-                    <CheckSquare className="icon__md" />
-                    <h6>Check List</h6>
-                  </div>
-                  <div className="card__action__btn">
-                    <button onClick={() => deleteAllTask()}>
-                      Delete all tasks
-                    </button>
-                  </div>
-                </div>
-                {/* Progress bar for task completion */}
-                <div className="progress__bar mt-2 mb-2">
-                  <div className="progress flex-1">
-                    <div
-                      className="progress-bar"
-                      role="progressbar"
-                      style={{ width: calculatePercent() + "%" }}
-                      aria-valuenow="75"
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                    >
-                      {calculatePercent() + "%"}
-                    </div>
+                    <h6>Task Description</h6>
                   </div>
                 </div>
 
-                {/* Displaying tasks */}
                 <div className="my-2">
                   {values.task.length !== 0 ? (
                     values.task.map((item, index) => (
                       <div className="task__list d-flex align-items-start gap-2">
-                        <input
-                          className="task__checkbox"
-                          type="checkbox"
-                          defaultChecked={item.completed}
-                          onChange={() => {
-                            updateTask(item.id);
-                          }}
-                        />
-
+                  
                         <h6
                           className={`flex-grow-1 ${
                             item.completed === true ? "strike-through" : ""
@@ -240,7 +118,7 @@ export default function CardDetails(props) {
                           }}
                           style={{
                             cursor: "pointer",
-                            widht: "18px",
+                            width: "18px",
                             height: "18px",
                           }}
                         />
@@ -249,49 +127,23 @@ export default function CardDetails(props) {
                   ) : (
                     <></>
                   )}
-
-                  {/* Editable component for adding tasks */}
                   <Editable
                     parentClass={"task__editable"}
-                    name={"Add Task"}
-                    btnName={"Add task"}
+                    name={"Add Desc"}
+                    btnName={"Add Desc"}
                     onSubmit={addTask}
                   />
                 </div>
               </div>
             </div>
             <div className="col-4">
-              <h6>Add to card</h6>
+              <h6>Actions</h6>
               <div className="d-flex card__action__btn flex-column gap-2">
-                {/* Button to add label/tag */}
-                <button onClick={() => setLabelShow(true)}>
-                  <span className="icon__sm">
-                    <Tag />
-                  </span>
-                  Add Label
-                </button>
-                {/* Component for managing labels/tags */}
-                {labelShow && (
-                  <Label
-                    color={colors}
-                    addTag={addTag}
-                    tags={values.tags}
-                    onClose={setLabelShow}
-                  />
-                )}
-                <button>
-                  <span className="icon__sm">
-                    <Clock />
-                  </span>
-                  Date
-                </button>
-
-                {/* Button to delete card */}
                 <button onClick={() => props.removeCard(props.bid, values.id)}>
                   <span className="icon__sm">
                     <Trash />
                   </span>
-                  Delete Card
+                  Delete Task
                 </button>
               </div>
             </div>

@@ -9,12 +9,16 @@ import useLocalStorage from "use-local-storage";
 import "../bootstrap.css";
 
 function App() {
+  // Load initial data from local storage if it exists, otherwise use default
+  const initialData = JSON.parse(localStorage.getItem("kanban-board")) || [
+    { id: "todo", boardName: "To do", card: [] },
+    { id: "inprogress", boardName: "In Progress", card: [] },
+    { id: "peerreview", boardName: "Peer Review", card: [] },
+    { id: "done", boardName: "Done", card: [] },
+  ];
+
   // State to manage boards and cards
-  const [data, setData] = useState(
-    localStorage.getItem("kanban-board")
-      ? JSON.parse(localStorage.getItem("kanban-board"))
-      : []
-  );
+  const [data, setData] = useState(initialData);
 
   // State for managing theme (light/dark mode) using local storage
   const defaultDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -128,7 +132,7 @@ function App() {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="App" data-theme={theme}>
-        <Navbar switchTheme={switchTheme} />
+        <Navbar switchTheme={switchTheme} theme={theme} />
         <div className="app_outer">
           <div className="app_boards">
             {/* Rendering each board component */}
@@ -145,14 +149,7 @@ function App() {
                 updateCard={updateCard}
               />
             ))}
-            {/* Editable component to add new boards */}
-            <Editable
-              class={"add__board"}
-              name={"Add Board"}
-              btnName={"Add Board"}
-              onSubmit={addBoard}
-              placeholder={"Enter Board Title"}
-            />
+       
           </div>
         </div>
       </div>

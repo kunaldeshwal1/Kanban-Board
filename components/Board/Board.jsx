@@ -79,14 +79,16 @@ export default function Board(props) {
         </div>
       </div>
       
-      {/* Search input for filtering tasks */}
-      <input
-        type="text"
-        className="search__input"
-        placeholder="Search Task..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
+      {/* Conditional rendering of search input */}
+      {props.card?.length > 0 && (
+        <input
+          type="text"
+          className="search__input"
+          placeholder="Search Task..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      )}
       
       {/* Droppable area for cards using react-beautiful-dnd */}
       <Droppable droppableId={props.id.toString()}>
@@ -116,14 +118,16 @@ export default function Board(props) {
       </Droppable>
       
       {/* Footer section for adding new tasks */}
-      <div className="board__footer">
-        <Editable
-          name={"Add Task"}
-          btnName={"Add Task"}
-          placeholder={"Enter Task"}
-          onSubmit={(value) => props.addCard(value, props.id)}
-        />
-      </div>
+      {props.name === "To do" && (
+        <div className="board__footer">
+          <Editable
+            name={"Add Task"}
+            btnName={"Add Task"}
+            placeholder={"Enter Task"}
+            onSubmit={(value) => props.addCard(value, props.id)}
+          />
+        </div>
+      )}
     </div>
   );
 }
